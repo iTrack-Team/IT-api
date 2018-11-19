@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const mongoose = require('mongoose');
 
 const { User } = require('./database/models/user/user');
 
@@ -13,7 +12,7 @@ User.insertMany([
     surname: 'Германенко',
     email: 'artemgermanenko67@gmail.com',
     hash: genPass('12345a'),
-  }
+  },
 ], (err) => {
   if (err) {
     console.log(err);

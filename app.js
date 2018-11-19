@@ -33,7 +33,7 @@ app.use(middlewares.cors);
 
 app.use(require('./routes'));
 
-//require('./dbInit');
+// require('./dbInit');
 
 const server = app.listen(config.port, () => {
   console.log(`[*] Server on port ${server.address().port}`);
