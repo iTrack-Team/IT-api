@@ -1,7 +1,5 @@
 const nodemailer = require('nodemailer');
 
-const { mailerCredentials } = require('../top-secret');
-
 const transport = nodemailer.createTransport({
   service: 'Gmail',
   auth: {

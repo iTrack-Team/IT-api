@@ -4,10 +4,12 @@ const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
 const MongoStore = require('connect-mongo')(expressSession);
 const passport = require('passport');
-const middlewares = require('./api/middlewares');
 const config = require('./config/config');
 
 const app = express();
+
+require('./database/index');
+require('./api/passport');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -26,13 +28,19 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./database');
-require('./api/passport');
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    res.end();
+  } else {
+    next();
+  }
+});
 
-app.use(middlewares.cors);
-
-app.use(require('./routes'));
-
+app.use(require('./routes/index'));
 // require('./dbInit');
 
 const server = app.listen(config.port, () => {

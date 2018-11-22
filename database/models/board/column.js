@@ -1,9 +1,10 @@
-const mongoose = require('mongoose').Schema;
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
 const columnSchema = new Schema({
   tasks: [{
+    _id: false,
     data: {
       type: Schema.Types.ObjectId,
       required: true,
