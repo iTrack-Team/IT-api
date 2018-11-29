@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 });
 
 app.use(require('./routes/index'));
-// require('./dbInit');
+// require('./dbFill');
 
 const server = app.listen(config.port, () => {
   console.log(`[*] Server on port ${server.address().port}`);
