@@ -1,17 +1,16 @@
-const mongoose = require('mongoose').Schema;
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
 const boardSchema = new Schema({
   columns: [{
-    data: {
-      type: Schema.Types.ObjectId,
-      ref: 'Column',
-      index: true,
-      required: true,
-    },
+    type: Schema.Types.ObjectId,
+    ref: 'Column',
+    index: true,
+    required: true,
   }],
   name: { type: String, required: true },
+  description: { type: String, required: true },
 });
 
 const Board = mongoose.model('Board', boardSchema);

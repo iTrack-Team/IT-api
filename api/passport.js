@@ -1,27 +1,19 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('mongoose').model('User');
-const bcrypt = require('bcryptjs');
+const { User } = require('../database/models/user/user');
 
-const verifyPassword = (password, user, done) => {
-  bcrypt.compare(password, user.hash, (err, res) => {
-    if (!res) {
-      return done(null, false, { message: 'Incorrect password.' });
-    }
-    return done(null, user);
-  });
-};
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password',
-}, ((email, password, done) => {
+}, (email, password, done) => {
   User.findOne({ email }, (err, user) => {
     if (err) { return done(err); }
-    if (!user) { return done(null, false, { message: 'Incorrect email.' }); }
-    return verifyPassword(password, user, done);
+    if (!user) { return done(null, false, { message: 'Incorrect username.' }); }
+    if (!user.verifyPassword(password)) { return done(null, false, { message: 'Incorrect password.' }); }
+    return done(null, user);
   });
-})));
+}));
 
 passport.serializeUser((user, cb) => {
   cb(null, user._id);

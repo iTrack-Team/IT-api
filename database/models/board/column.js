@@ -1,15 +1,13 @@
-const mongoose = require('mongoose').Schema;
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
 const columnSchema = new Schema({
   tasks: [{
-    data: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      index: true,
-      ref: 'Task',
-    },
+    type: Schema.Types.ObjectId,
+    required: true,
+    index: true,
+    ref: 'Task',
   }],
   name: { type: String, required: true },
 });

@@ -18,5 +18,9 @@ mongoose.connect(config.db, options)
   });
 
 require('./models/user/user');
+require('./models/user/user-board-rel');
+require('./models/board/board');
+require('./models/board/column');
+require('./models/board/task');
 
 module.exports = mongoose;
