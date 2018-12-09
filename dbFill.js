@@ -13,28 +13,28 @@ const t5 = new mongoose.Types.ObjectId();
 
 Task.insertMany([{
   _id: t1,
-  name: 'task1',
-  description: 'task1 descr',
+  name: 'После сна:',
+  description: 'Нужно почистить зубы, сделать зарядку, застелить кровать.',
 },
 {
   _id: t2,
-  name: 'task2',
-  description: 'task2 descr',
+  name: 'Еда:',
+  description: 'Приготовить себе сытный завтрак, чтобы зарядиться энергией на целый день.',
 },
 {
   _id: t3,
-  name: 'task3',
-  description: 'task3 descr',
+  name: 'Одежда:',
+  description: 'Выбрать оджеду по погоде и погладить её.',
 },
 {
   _id: t4,
-  name: 'task4',
-  description: 'task4 descr',
+  name: 'Прийти домой:',
+  description: 'Закинуть одежду в стирку, поужинать.',
 },
 {
   _id: t5,
-  name: 'task5',
-  description: 'task5 descr',
+  name: 'Сон:',
+  description: 'Умыться, принять душ, лечь спать.',
 }], (err) => {
   if (err) {
     console.log(err);
@@ -47,12 +47,12 @@ const c2 = new mongoose.Types.ObjectId();
 Column.insertMany([{
   _id: c1,
   tasks: [t1, t2, t3],
-  name: 'column1',
+  name: 'Расписание на утро:',
 },
 {
   _id: c2,
   tasks: [t4, t5],
-  name: 'column2',
+  name: 'Расписание на вечер:',
 }], (err) => {
   if (err) {
     console.log(err);
@@ -64,8 +64,8 @@ const b1 = new mongoose.Types.ObjectId();
 Board.insertMany([{
   _id: b1,
   columns: [c1, c2],
-  name: 'Board by Artem',
-  description: 'Best board',
+  name: 'Мой день!',
+  description: 'Эта доска для расписания моего дня.',
 }], (err) => {
   if (err) {
     console.log(err);
@@ -73,7 +73,7 @@ Board.insertMany([{
 });
 
 UserBoardRel.insertMany([{
-  user: '5bff9888afde310a60140c14',
+  user: '5c09241b863a5933f4168fa9',
   board: b1,
 }], (err) => {
   if (err) {
