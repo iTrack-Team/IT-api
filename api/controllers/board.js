@@ -21,13 +21,122 @@ function getColumns(arr) {
   return Promise.all(arr.map(el => getOneColumn(el)));
 }
 
+function updateColumn(columnId, options) {
+  return Column.findOneAndUpdate({ _id: columnId }, options);
+}
+
 const boardController = {};
 
-boardController.create = function (options) {
-  const board = new Board(options);
-  return board.save();
+boardController.addNewColumn = function (user, nameI) {
+  let board = {};
+  return UserBoardRel.findOne({ user })
+    .populate('board', '-__v')
+    .lean()
+    .then(data => data.board)
+    .then((data) => {
+      board = data;
+    })
+    .then(() => {
+      const column = new Column({
+        tasks: [],
+        name: nameI,
+      });
+      return column.save();
+    })
+    .then((column) => {
+      board.columns.push(column._id);
+      return Board.findByIdAndUpdate(board._id, board);
+    })
+    .then(() => this.getInfo(user));
 };
 
+boardController.addNewTask = function (columnId, name, description, userId) {
+  let task;
+  const newTask = new Task({
+    name,
+    description,
+  });
+  return newTask.save()
+    .then((data) => {
+      task = data;
+    })
+    .then(() => getOneColumn(columnId))
+    .then((data) => {
+      data.tasks.push(task._id);
+      return updateColumn(columnId, data);
+    })
+    .then(() => this.getInfo(userId));
+};
+
+boardController.editColumn = function (columnId, name, userId) {
+  return Column.findByIdAndUpdate(columnId, {
+    name,
+  })
+    .then(() => this.getInfo(userId));
+};
+
+boardController.editTask = function (taskId, name, description, userId) {
+  return Task.findByIdAndUpdate(taskId, {
+    name,
+    description,
+  })
+    .then(() => this.getInfo(userId));
+};
+
+boardController.editBoard = function (userId, name) {
+  return UserBoardRel.findOne({ user: userId })
+    .then(data => Board.findByIdAndUpdate(data.board, {
+      name,
+    }))
+    .then(() => this.getInfo(userId));
+};
+
+boardController.deleteTask = function (columnId, taskId, userId) {
+  return Task.findByIdAndDelete(taskId)
+    .then(() => getOneColumn(columnId))
+    .then((data) => {
+      const array = [];
+      for (let i = 0; i < data.tasks.length; i++) {
+        if (data.tasks[i] != taskId) {
+          array.push(data.tasks[i]);
+        }
+      }
+      return Column.findOneAndUpdate(columnId, {
+        tasks: array,
+      });
+    })
+    .then(() => this.getInfo(userId));
+};
+
+boardController.deleteColumn = function (columnId, userId) {
+  return Column.findByIdAndDelete(columnId)
+    .then(() => UserBoardRel.findOne({ user: userId }, '-__v -_id -user')
+      .populate('board', '-__v')
+      .then(data => data.board))
+    .then((board) => {
+      const array = [];
+      for (let i = 0; i < board.columns.length; i++) {
+        if (board.columns[i] != columnId) {
+          array.push(board.columns[i]);
+        }
+      }
+      return Board.findOneAndUpdate(board._id, {
+        columns: array,
+      });
+    })
+    .then(() => this.getInfo(userId));
+};
+
+boardController.moveTask = function (taskId, columnFrom, columnTo, userId) {
+  let task;
+
+  return getTaskById(taskId)
+    .then((data) => {
+      task = data;
+    })
+    .then(() => this.deleteTask(columnFrom, taskId, userId))
+    .then(() => this.addNewTask(columnTo, task.name, task.description, userId));
+};
 
 boardController.getInfo = function (userId) {
   const board = {};
@@ -51,7 +160,7 @@ boardController.getInfo = function (userId) {
         el.tasks = data;
         return el;
       }))))
-    .then((data) => {
+    .then(() => {
       board.columns = columns;
       return board;
     });
