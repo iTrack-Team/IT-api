@@ -4,8 +4,8 @@ const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
 const MongoStore = require('connect-mongo')(expressSession);
 const passport = require('passport');
-const config = require('./config/config');
 const morgan = require('morgan');
+const config = require('./config/config');
 
 const app = express();
 
@@ -26,15 +26,13 @@ app.use(expressSession({
   rolling: true,
   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 },
 }));
-app.use(morgan(function (tokens, req, res) {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms'
-  ].join(' ')
-}));
+app.use(morgan((tokens, req, res) => [
+  tokens.method(req, res),
+  tokens.url(req, res),
+  tokens.status(req, res),
+  tokens.res(req, res, 'content-length'), '-',
+  tokens['response-time'](req, res), 'ms',
+].join(' ')));
 app.use(passport.initialize());
 app.use(passport.session());
 
