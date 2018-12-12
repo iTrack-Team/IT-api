@@ -83,7 +83,7 @@ boardController.editTask = function (taskId, name, description, userId) {
     .then(() => this.getInfo(userId));
 };
 
-boardController.editBoard = function (userId, name) {
+boardController.editBoard = function (userId, name, description) {
   return UserBoardRel.findOne({ user: userId })
     .then(data => Board.findByIdAndUpdate(data.board, {
       name,

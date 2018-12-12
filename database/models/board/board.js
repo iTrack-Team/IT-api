@@ -10,7 +10,6 @@ const boardSchema = new Schema({
     required: true,
   }],
   name: { type: String, required: true },
-  description: { type: String, required: true },
 });
 
 const Board = mongoose.model('Board', boardSchema);
