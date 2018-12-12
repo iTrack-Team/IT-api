@@ -79,7 +79,7 @@ userController.changePassword = function (userId, oldPass, newPass) {
 
 userController.resetPassword = function (mail) {
   return User
-    .findOne({ email : mail, })
+    .findOne({ email: mail })
     .then((user) => {
       if (user) {
         const password = generatePassword(8, false);

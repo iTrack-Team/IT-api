@@ -25,6 +25,7 @@ function updateColumn(columnId, options) {
   return Column.findOneAndUpdate({ _id: columnId }, options);
 }
 
+
 const boardController = {};
 
 boardController.addNewColumn = function (user, nameI) {
@@ -130,12 +131,28 @@ boardController.deleteColumn = function (columnId, userId) {
 boardController.moveTask = function (taskId, columnFrom, columnTo, userId) {
   let task;
 
-  return getTaskById(taskId)
-    .then((data) => {
-      task = data;
+  return Column.findOne({
+    _id: columnFrom,
+  })
+    .then((column) => {
+      const arr = [];
+      for (let i = 0; i < column.tasks.length; i++) {
+        if (column.tasks[i] != taskId) {
+          arr.push(column.task[i]);
+        }
+      }
+      return Column.findOneAndUpdate({ _id: columnFrom }, {
+        tasks: arr,
+      });
     })
-    .then(() => this.deleteTask(columnFrom, taskId, userId))
-    .then(() => this.addNewTask(columnTo, task.name, task.description, userId));
+    .then(() => Column.findOne({ _id: columnTo }))
+    .then((column) => {
+      column.tasks.push(taskId);
+      return Column.findOneAndUpdate({ _id: columnTo }, {
+        tasks: column.tasks,
+      });
+    })
+    .then(() => this.getInfo(userId));
 };
 
 boardController.getInfo = function (userId) {
