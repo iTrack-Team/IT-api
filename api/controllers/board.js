@@ -138,7 +138,7 @@ boardController.moveTask = function (taskId, columnFrom, columnTo, userId) {
       const arr = [];
       for (let i = 0; i < column.tasks.length; i++) {
         if (column.tasks[i] != taskId) {
-          arr.push(column.task[i]);
+          arr.push(column.tasks[i]);
         }
       }
       return Column.findOneAndUpdate({ _id: columnFrom }, {
