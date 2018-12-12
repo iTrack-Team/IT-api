@@ -93,19 +93,10 @@ boardController.editBoard = function (userId, name, description) {
 };
 
 boardController.deleteTask = function (columnId, taskId, userId) {
-  return Task.findByIdAndDelete(taskId)
-    .then(() => getOneColumn(columnId))
-    .then((data) => {
-      const array = [];
-      for (let i = 0; i < data.tasks.length; i++) {
-        if (data.tasks[i] != taskId) {
-          array.push(data.tasks[i]);
-        }
-      }
-      return Column.findOneAndUpdate(columnId, {
-        tasks: array,
-      });
-    })
+  return Column.findOneAndUpdate({
+    _id: columnId,
+  }, { $pull: { tasks: taskId } })
+    .then(() => Task.findByIdAndDelete(taskId))
     .then(() => this.getInfo(userId));
 };
 
@@ -174,7 +165,14 @@ boardController.getInfo = function (userId) {
     })
     .then(() => Promise.all(columns.map(el => getTasks(el.tasks)
       .then((data) => {
-        el.tasks = data;
+        const arr = [];
+        for (let i = 0; i < data.length; i++) {
+          if (data[i] !== undefined && data[i] !== null) {
+            arr.push(data[i]);
+          }
+        }
+        el.tasks = arr;
+        console.log(el);
         return el;
       }))))
     .then(() => {
