@@ -37,10 +37,24 @@ route.post('/register', (req, res) => {
     });
 });
 
+route.post('/change-password', (req, res) => {
+  userController
+    .changePassword(req.user._id, req.body.oldPass, req.body.newPass)
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
+});
+
+
 route.post('/reset-password', (req, res) => {
   userController
     .resetPassword(req.body.email)
-    .then(() => response(res, {}))
+    .then(() => {
+      res.status(200).send();
+    })
     .catch((err) => {
       res.status(400).json(err);
     });
